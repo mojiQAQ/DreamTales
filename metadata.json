@@ -1,0 +1,5 @@
+{
+  "name": "DreamTales AI",
+  "description": "A magical children's picture book generator using Gemini 3 Pro for storytelling, Nano Banana for illustrations, and Veo 3 for bringing stories to life.",
+  "requestFramePermissions": []
+}
