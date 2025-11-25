@@ -30,7 +30,6 @@ export interface StoryGenerationResponse {
     visualPrompt: string;
   }[];
 }
-
 // AI Studio global types
 declare global {
   interface AIStudio {

@@ -21,32 +21,14 @@ const App: React.FC = () => {
 
   // Initial API Key Check for Veo compatibility
   useEffect(() => {
-    const checkKey = async () => {
-      try {
-        if (window.aistudio && window.aistudio.hasSelectedApiKey) {
-          const hasKey = await window.aistudio.hasSelectedApiKey();
-          setHasApiKey(hasKey);
-        } else {
-          // Fallback if not running in the specific environment expecting this
-          setHasApiKey(!!process.env.API_KEY); 
-        }
-      } catch (e) {
-        console.error("Error checking API key", e);
-      }
-    };
-    checkKey();
+
+    const apiKey = process.env.API_KEY || process.env.GEMINI_API_KEY;
+    setHasApiKey(!!apiKey);
+    if (!apiKey) {
+      console.warn("No API key found. Please set GEMINI_API_KEY in your environment variables.");
+    }
   }, []);
 
-  const handleSelectKey = async () => {
-    if (window.aistudio && window.aistudio.openSelectKey) {
-      await window.aistudio.openSelectKey();
-      // Assume success as per instructions to avoid race conditions
-      setHasApiKey(true);
-      window.location.reload(); // Reload to ensure the new key is picked up by process.env injection
-    } else {
-        alert("Billing selection is not available in this environment.");
-    }
-  };
 
   const handleGenerateStory = async () => {
     if (!topic.trim()) return;
@@ -102,7 +84,7 @@ const App: React.FC = () => {
 
     // Check Key again before expensive/paid operation
     if (!hasApiKey) {
-        await handleSelectKey();
+        setGlobalError("API Key not configured. Please set GEMINI_API_KEY in your environment.");
         return; 
     }
 
@@ -175,9 +157,7 @@ const App: React.FC = () => {
             <p className="text-slate-600 mb-8">
                 To generate high-quality stories and magical videos with Veo, please connect your Google Cloud project.
             </p>
-            <Button onClick={handleSelectKey} className="w-full justify-center">
-                Connect Google Cloud Project
-            </Button>
+
             <p className="mt-4 text-xs text-slate-400">
                 Uses Gemini 3 Pro & Veo. <a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" rel="noreferrer" className="underline hover:text-indigo-600">Billing info</a>
             </p>
